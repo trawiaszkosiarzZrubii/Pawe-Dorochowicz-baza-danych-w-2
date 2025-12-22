@@ -96,7 +96,7 @@ with tab2:
                             "Nazwa": prod_nazwa,      # Zgodnie z obrazkiem (wielka litera N)
                             "liczba": prod_liczba,
                             "cena": prod_cena,
-                            "Kategoria_ID": cat_id
+                            "kategoria_ID": cat_id
                         }
                         
                         # Tabela nazywa się "Stół" (z polskim znakiem)
