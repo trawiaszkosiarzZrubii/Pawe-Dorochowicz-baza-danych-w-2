@@ -6,45 +6,61 @@ import time
 # --- Konfiguracja Strony i Motywu ---
 st.set_page_config(
     page_title="Guild Master's Vault",
-    page_icon="🐉",
+    page_icon="📜",
     layout="centered"
 )
 
-# --- STYLE CSS (D&D Theme) ---
-# Wstrzykujemy kod CSS, aby zmienić wygląd standardowego Streamlit
+# --- STYLE CSS (Light / Parchment Theme) ---
 st.markdown("""
 <style>
     /* Import czcionki fantasy z Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato&display=swap');
 
-    /* Główne tło aplikacji - ciemny loch */
+    /* Główne tło aplikacji - Jasny Pergamin */
     .stApp {
-        background-color: #1a1a1a;
-        background-image: linear-gradient(to bottom right, #1a1a1a, #2d2d2d);
-        color: #e0d6c2;
+        background-color: #fdfbf7;
+        background-image: linear-gradient(to bottom, #fdfbf7, #f4eacc);
+        color: #2c1e1e; /* Ciemny brąz - kolor atramentu */
     }
 
-    /* Nagłówki */
+    /* Nagłówki - Styl Królewski */
     h1, h2, h3, h4 {
         font-family: 'Cinzel', serif !important;
-        color: #ffcc00 !important;
-        text-shadow: 2px 2px 4px #000000;
+        color: #8a1212 !important; /* Ciemna czerwień / Burgund */
+        text-shadow: none;
+        font-weight: 700;
     }
 
-    /* Pola tekstowe i inputy */
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea, .stNumberInput > div > div > input, .stSelectbox > div > div > div {
-        background-color: #2b2b2b;
-        color: #ffffff;
-        border: 2px solid #5c4033;
-        border-radius: 5px;
+    /* Tekst zwykły */
+    p, label, .stMarkdown {
+        font-family: 'Lato', sans-serif;
+        color: #3b2f2f !important; /* Ciemny szary/brąz dla czytelności */
+        font-size: 1.05rem;
+    }
+
+    /* Pola tekstowe i inputy - Białe tło z obramowaniem */
+    .stTextInput > div > div > input, 
+    .stTextArea > div > div > textarea, 
+    .stNumberInput > div > div > input, 
+    .stSelectbox > div > div > div {
+        background-color: #ffffff;
+        color: #000000;
+        border: 2px solid #8a1212; /* Burgundowa ramka */
+        border-radius: 4px;
         font-family: 'Lato', sans-serif;
     }
+    
+    /* Kolor etykiet nad inputami */
+    .stTextInput label, .stNumberInput label, .stSelectbox label, .stTextArea label {
+        color: #5c4033 !important;
+        font-weight: bold;
+    }
 
-    /* Przyciski - Styl starego zwoju/przycisku magicznego */
+    /* Przyciski - Styl Jasny ze złotem */
     .stButton > button {
-        background-color: #5c0a0a;
-        color: #ffcc00;
-        border: 2px solid #ffcc00;
+        background-color: #fff8e1;
+        color: #8a1212;
+        border: 2px solid #8a1212;
         font-family: 'Cinzel', serif;
         font-weight: bold;
         transition: all 0.3s ease;
@@ -52,37 +68,55 @@ st.markdown("""
     }
     .stButton > button:hover {
         background-color: #8a1212;
-        box-shadow: 0 0 10px #ffcc00;
+        color: #fff; /* Biały tekst po najechaniu */
+        border-color: #5c0a0a;
         transform: scale(1.02);
     }
 
     /* Karty (Tabs) */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
+        background-color: transparent;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #2b2b2b;
+        background-color: #e6dec5; /* Beżowy przycisk */
         border-radius: 5px 5px 0 0;
-        color: #aaaaaa;
+        color: #555555;
         font-family: 'Cinzel', serif;
+        border: 1px solid #dcdcdc;
     }
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background-color: #5c0a0a;
-        color: #ffcc00;
+        background-color: #8a1212; /* Aktywna karta - Burgund */
+        color: #ffffff;
+    }
+
+    /* Tabela (Dataframe) */
+    [data-testid="stDataFrame"] {
+        border: 2px solid #8a1212;
+        background-color: #fff;
     }
 
     /* Alerty i komunikaty */
     .stAlert {
-        background-color: #2b2b2b;
-        border: 1px solid #ffcc00;
-        color: #e0d6c2;
+        background-color: #fff8e1;
+        border: 1px solid #8a1212;
+        color: #3b2f2f;
+    }
+    
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #f4eacc;
+        border-right: 2px solid #d4c4a8;
+    }
+    [data-testid="stSidebar"] h2 {
+        color: #8a1212 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # --- Tytuł Aplikacji ---
-st.title("🏰 Skarbiec Gildii Kupieckiej")
-st.markdown("*Zarządzaj ekwipunkiem, zwojami i artefaktami (Baza Supabase)*")
+st.title("🏰 Królewskie Rejestry Gildii")
+st.markdown("**Oficjalny spis inwentarza (Baza Supabase)**")
 
 # --- Połączenie z Supabase ---
 @st.cache_resource
@@ -92,7 +126,7 @@ def init_connection():
         key = st.secrets["SUPABASE_KEY"]
         return create_client(url, key)
     except Exception as e:
-        st.error(f"💀 Krytyczny błąd rzucania zaklęcia połączenia: {e}")
+        st.error(f"💀 Błąd pieczęci królewskiej (połączenia): {e}")
         return None
 
 supabase = init_connection()
@@ -100,37 +134,41 @@ supabase = init_connection()
 if not supabase:
     st.stop()
 
-# --- Sidebar: Mistrz Podziemi ---
+# --- Sidebar: Skryba ---
 with st.sidebar:
-    st.header("🎲 Panel Mistrza Gry")
-    st.write("Witaj w panelu zarządzania.")
-    if st.button("Rzuć kością k20"):
-        roll = random.randint(1, 20)
-        st.success(f"Wyrzuciłeś: **{roll}**")
-        if roll == 20:
-            st.balloons()
-            st.write("KRYTYCZNY SUKCES! 🌟")
-        elif roll == 1:
-            st.error("KRYTYCZNA PORAŻKA! 💀")
+    st.header("⚖️ Panel Zarządcy")
+    st.write("Witaj, Skrybo.")
     
     st.markdown("---")
-    st.info("💡 Pamiętaj: Każdy przedmiot musi mieć przypisaną kategorię (Typ Magii/Przedmiotu).")
+    st.write("**Los dnia:**")
+    if st.button("Rzuć kością k20"):
+        roll = random.randint(1, 20)
+        if roll == 20:
+            st.success(f"WYNIK: {roll} - Fortuna sprzyja!")
+            st.balloons()
+        elif roll == 1:
+            st.error(f"WYNIK: {roll} - Pech...")
+        else:
+            st.info(f"Wynik rzutu: **{roll}**")
+    
+    st.markdown("---")
+    st.caption("System zarządzania magazynem v2.0 Light Theme")
 
 # --- Zakładki ---
-tab1, tab2, tab3 = st.tabs(["📜 Spisz Nowy Typ", "⚔️ Wykuj Przedmiot", "💎 Przegląd Skarbca"])
+tab1, tab2, tab3 = st.tabs(["📜 Nowy Dekret (Kategoria)", "⚔️ Rejestracja Dóbr", "💎 Księga Inwentarza"])
 
 # ==========================================
-# ZAKŁADKA 1: DODAWANIE KATEGORII (RPG Style)
+# ZAKŁADKA 1: DODAWANIE KATEGORII
 # ==========================================
 with tab1:
-    st.header("Nowa Kategoria Ekwipunku")
-    st.write("Dodaj nowy typ przedmiotów do ksiąg gildii (np. Mikstury, Broń, Zwoje).")
+    st.header("Zdefiniuj Typ Dóbr")
+    st.write("Wpisz nową kategorię do rejestru (np. Żywność, Uzbrojenie).")
     
     with st.form("category_form", clear_on_submit=True):
-        cat_nazwa = st.text_input("Nazwa Kategorii (np. Bronie Dwuręczne)")
-        cat_opis = st.text_area("Opis (Lore / Zastosowanie)")
+        cat_nazwa = st.text_input("Nazwa Kategorii")
+        cat_opis = st.text_area("Opis przeznaczenia")
         
-        submitted_cat = st.form_submit_button("✒️ Spisz w Kronikach")
+        submitted_cat = st.form_submit_button("✒️ Złóż Podpis i Zapisz")
         
         if submitted_cat:
             if cat_nazwa:
@@ -140,114 +178,105 @@ with tab1:
                         "opis": cat_opis
                     }
                     supabase.table("Kategorie").insert(data).execute()
-                    st.success(f"📜 Sukces! Kategoria **{cat_nazwa}** została dodana do kronik.")
+                    st.success(f"✅ Kategoria **{cat_nazwa}** została wpisana do ksiąg.")
                 except Exception as e:
-                    st.error(f"🔮 Mroczna magia zablokowała zapis: {e}")
+                    st.error(f"❌ Błąd zapisu atramentem: {e}")
             else:
-                st.warning("⚠️ Musisz nadać nazwę, zanim spiszesz kategorię.")
+                st.warning("⚠️ Pole nazwy nie może pozostać puste.")
 
 # ==========================================
-# ZAKŁADKA 2: DODAWANIE PRODUKTU (Stół -> Ekwipunek)
+# ZAKŁADKA 2: DODAWANIE PRODUKTU
 # ==========================================
 with tab2:
-    st.header("Dodaj do Inwentarza")
-    st.write("Wprowadź nowy artefakt lub mebel do magazynu.")
+    st.header("Przyjęcie Towaru")
+    st.write("Wprowadź przedmiot do magazynu głównego.")
 
     # 1. Pobranie aktualnych kategorii
     try:
         response = supabase.table("Kategorie").select("ID, nazwa").execute()
         categories = response.data
     except Exception as e:
-        st.error("❌ Nie udało się odczytać zwojów z kategoriami.")
+        st.error("❌ Nie udało się odczytać listy kategorii.")
         categories = []
 
     cat_options = {cat['nazwa']: cat['ID'] for cat in categories}
 
     if not categories:
-        st.warning("🕯️ Twoje zwoje są puste. Dodaj najpierw kategorię w pierwszej zakładce!")
+        st.warning("📜 Brak kategorii. Udaj się do pierwszej zakładki, by je zdefiniować.")
     else:
         with st.form("product_form", clear_on_submit=True):
-            col_img, col_data = st.columns([1, 2])
+            col_icon, col_input = st.columns([1, 4])
+            with col_icon:
+                st.markdown("<h1 style='text-align: center;'>📦</h1>", unsafe_allow_html=True)
+            with col_input:
+                prod_nazwa = st.text_input("Nazwa Przedmiotu")
             
-            with col_img:
-                st.markdown("### 🛡️") # Ikona obok formularza
-            
-            with col_data:
-                prod_nazwa = st.text_input("Nazwa Przedmiotu/Stołu")
-            
+            st.markdown("---")
             col1, col2 = st.columns(2)
             with col1:
-                prod_liczba = st.number_input("Ilość w Magazynie", min_value=0, step=1, format="%d")
+                prod_liczba = st.number_input("Ilość sztuk", min_value=0, step=1, format="%d")
             with col2:
-                prod_cena = st.number_input("Wartość (sztuki złota)", min_value=0.0, step=0.01, format="%.2f")
+                prod_cena = st.number_input("Wartość jednostkowa (Złoto)", min_value=0.0, step=0.01, format="%.2f")
             
-            selected_cat_name = st.selectbox("Typ Przedmiotu (Kategoria)", options=list(cat_options.keys()))
+            selected_cat_name = st.selectbox("Przypisz do Kategorii", options=list(cat_options.keys()))
             
-            submitted_prod = st.form_submit_button("🔨 Wykuj i Dodaj")
+            submitted_prod = st.form_submit_button("🔨 Zatwierdź Przyjęcie")
             
             if submitted_prod:
                 if prod_nazwa and selected_cat_name:
                     try:
-                        with st.spinner('Kowale pracują...'):
-                            time.sleep(0.5) # Mały efekt oczekiwania dla klimatu
-                            
+                        with st.spinner('Skrybowie notują...'):
+                            time.sleep(0.5)
                             cat_id = cat_options[selected_cat_name]
                             
-                            # Używamy kluczy zgodnie z Twoją bazą danych
                             data = {
-                                "Nazwa": prod_nazwa,  # Wielka litera N, jak na obrazku
+                                "Nazwa": prod_nazwa,
                                 "liczba": prod_liczba,
                                 "cena": prod_cena,
-                                "kategoria_ID": cat_id # Uwaga na wielkość liter w Supabase!
+                                "kategoria_ID": cat_id 
                             }
                             
-                            # Tabela "Stół"
                             supabase.table("Stół").insert(data).execute()
                         
-                        st.success(f"⚔️ Przedmiot **{prod_nazwa}** trafił do skarbca!")
-                        st.balloons()
+                        st.success(f"✅ Przedmiot **{prod_nazwa}** dodany do stanu!")
                         
                     except Exception as e:
-                        st.error(f"👹 Gobliny ukradły dane! Błąd: {e}")
+                        st.error(f"❌ Wystąpił błąd administracyjny: {e}")
                 else:
-                    st.warning("⚠️ Każdy przedmiot musi mieć nazwę.")
+                    st.warning("⚠️ Nazwa przedmiotu jest wymagana.")
 
 # ==========================================
 # ZAKŁADKA 3: PODGLĄD DANYCH
 # ==========================================
 with tab3:
-    st.header("Zawartość Skarbca")
+    st.header("Stan Magazynowy")
     
-    col_refresh, col_info = st.columns([1, 4])
-    with col_refresh:
-        if st.button("🔄 Przelicz"):
+    col_btn, col_txt = st.columns([1, 3])
+    with col_btn:
+        if st.button("🔄 Odśwież Księgi"):
             st.rerun()
-    
+            
     try:
-        # Pobieranie danych
         products_response = supabase.table("Stół").select("*").execute()
         products_data = products_response.data
         
-        # Opcjonalnie: Pobranie nazw kategorii, aby wyświetlić nazwę zamiast ID
-        # (Wymagałoby mapowania w Pythonie lub Join w Supabase)
-        
         if products_data:
-            st.markdown(f"### Znaleziono **{len(products_data)}** unikalnych artefaktów.")
+            st.markdown(f"W rejestrze znajduje się **{len(products_data)}** pozycji.")
             
-            # Wyświetlanie jako tabela z customową konfiguracją
+            # Konfiguracja wyświetlania tabeli
             st.dataframe(
                 products_data,
                 use_container_width=True,
                 column_config={
                     "id": st.column_config.NumberColumn("ID", format="%d"),
-                    "Nazwa": st.column_config.TextColumn("Artefakt", help="Nazwa przedmiotu"),
-                    "cena": st.column_config.NumberColumn("Wartość (gp)", format="%.2f gp"),
-                    "liczba": st.column_config.ProgressColumn("Stan Magazynowy", min_value=0, max_value=100, format="%f szt."),
+                    "Nazwa": st.column_config.TextColumn("Nazwa Towaru", help="Pełna nazwa inwentaryzacyjna"),
+                    "cena": st.column_config.NumberColumn("Cena (gp)", format="%.2f gp"),
+                    "liczba": st.column_config.ProgressColumn("Dostępność", min_value=0, max_value=100, format="%f szt."),
                     "Kategoria_ID": "ID Kategorii"
                 }
             )
         else:
-            st.info("🕸️ Skarbiec jest pusty. Pora wyruszyć na wyprawę!")
+            st.info("📜 Księgi są puste.")
             
     except Exception as e:
-        st.error("Błąd odczytu ksiąg wieczystych.")
+        st.error("Nie można otworzyć ksiąg (Błąd połączenia).")
