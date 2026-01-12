@@ -157,8 +157,9 @@ with col_main:
 
 # --- Panel Boczny (Sidebar) ---
 with st.sidebar:
-    st.header("🎲 Kostnica")
+    st.header("🎲 Rzuć kością K20")
     if st.button("Rzuć k20"):
         res = random.randint(1, 20)
         st.subheader(f"Wynik: {res}")
         if res == 20: st.balloons()
+            
