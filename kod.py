@@ -23,7 +23,7 @@ st.markdown("""
 
     h1, h2, h3 {
         font-family: 'Cinzel', serif !important;
-        color: #8a1212 !important;
+        color: #FF0000 !important;
         font-weight: 700;
     }
 
@@ -35,13 +35,13 @@ st.markdown("""
     /* Stylizacja przycisków */
     .stButton > button {
         background-color: #fff8e1;
-        color: #8a1212;
-        border: 2px solid #8a1212;
+        color: #FF0000;
+        border: 2px solid #FF0000;
         font-family: 'Cinzel', serif;
     }
     
     .stButton > button:hover {
-        background-color: #8a1212;
+        background-color: #FF0000;
         color: #ffffff;
     }
 
@@ -53,7 +53,7 @@ st.markdown("""
     }
     
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background-color: #8a1212;
+        background-color: #FF0000;
         color: #ffffff;
     }
 </style>
